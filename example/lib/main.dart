@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Result<IncrementException, bool> _shouldIncrement(int currentCount) {
     if (currentCount + 1 == 10) {
-      return Error(IncrementException("counter can't be bigger than 9"));
+      return Failure(IncrementException("counter can't be bigger than 9"));
     } else {
       return Success(true);
     }

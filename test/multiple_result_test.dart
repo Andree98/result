@@ -84,8 +84,8 @@ void main() {
     final result = useCase(returnError: true);
 
     MyException? exceptionResult;
-    if (result.isError()) {
-      exceptionResult = result.getError();
+    if (result.isFailure()) {
+      exceptionResult = result.getFailure();
     }
 
     expect(exceptionResult != null, true);
@@ -108,7 +108,7 @@ Result<MyException, SuccessResult> getMockedSuccessResult() {
 class MyUseCase {
   Result<MyException, MyResult> call({bool returnError = false}) {
     if (returnError) {
-      return Error(MyException('something went wrong'));
+      return Failure(MyException('something went wrong'));
     } else {
       return Success(MyResult('nice'));
     }

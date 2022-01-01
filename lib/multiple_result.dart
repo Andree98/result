@@ -4,23 +4,23 @@ import 'package:meta/meta.dart';
 
 /// Base Result class
 ///
-/// Receives two values [E] and [S]
-/// as [E] is an error and [S] is a success.
+/// Receives two values [F] and [S]
+/// as [F] is a failure and [S] is a success.
 @sealed
-abstract class Result<E, S> {
+abstract class Result<F, S> {
   /// Default constructor.
   const Result();
 
   /// Returns the current result.
   ///
-  /// It may be a [Success] or an [Error].
+  /// It may be a [Success] or an [Failure].
   /// Check with
   /// ```dart
   ///   result.isSuccess();
   /// ```
   /// or
   /// ```dart
-  ///   result.isError();
+  ///   result.isFailure();
   /// ```
   ///
   /// before casting the value;
@@ -29,22 +29,22 @@ abstract class Result<E, S> {
   /// Returns the value of [S].
   S? getSuccess();
 
-  /// Returns the value of [E].
-  E? getError();
+  /// Returns the value of [F].
+  F? getFailure();
 
-  /// Returns true if the current result is an [Error].
-  bool isError();
+  /// Returns true if the current result is a [Failure].
+  bool isFailure();
 
   /// Returns true if the current result is a [success].
   bool isSuccess();
 
   /// Return the result in one of these functions.
   ///
-  /// if the result is an error, it will be returned in
-  /// [whenError],
+  /// if the result is a failure, it will be returned in
+  /// [whenFailure],
   /// if it is a success it will be returned in [whenSuccess].
   W when<W>(
-    W Function(E error) whenError,
+    W Function(F failure) whenFailure,
     W Function(S success) whenSuccess,
   );
 }
@@ -54,7 +54,7 @@ abstract class Result<E, S> {
 /// return it when the result of a [Result] is
 /// the expected value.
 @immutable
-class Success<E, S> implements Result<E, S> {
+class Success<F, S> implements Result<F, S> {
   /// Receives the [S] param as
   /// the successful result.
   const Success(
@@ -69,7 +69,7 @@ class Success<E, S> implements Result<E, S> {
   }
 
   @override
-  bool isError() => false;
+  bool isFailure() => false;
 
   @override
   bool isSuccess() => true;
@@ -83,58 +83,58 @@ class Success<E, S> implements Result<E, S> {
 
   @override
   W when<W>(
-    W Function(E error) whenError,
+    W Function(F failure) whenFailure,
     W Function(S success) whenSuccess,
   ) {
     return whenSuccess(_success);
   }
 
   @override
-  E? getError() => null;
+  F? getFailure() => null;
 
   @override
   S? getSuccess() => _success;
 }
 
-/// Error Result.
+/// Failure Result.
 ///
 /// return it when the result of a [Result] is
 /// not the expected value.
 @immutable
-class Error<E, S> implements Result<E, S> {
-  /// Receives the [E] param as
-  /// the error result.
-  const Error(this._error);
+class Failure<F, S> implements Result<F, S> {
+  /// Receives the [F] param as
+  /// the failure result.
+  const Failure(this._failure);
 
-  final E _error;
+  final F _failure;
 
   @override
-  E get() {
-    return _error;
+  F get() {
+    return _failure;
   }
 
   @override
-  bool isError() => true;
+  bool isFailure() => true;
 
   @override
   bool isSuccess() => false;
 
   @override
-  int get hashCode => _error.hashCode;
+  int get hashCode => _failure.hashCode;
 
   @override
-  bool operator ==(Object other) => other is Error && other._error == _error;
+  bool operator ==(Object other) => other is Failure && other._failure == _failure;
 
   @override
   W when<W>(
-    W Function(E error) whenError,
+    W Function(F failure) whenFailure,
     W Function(S succcess) whenSuccess,
   ) {
-    return whenError(_error);
+    return whenFailure(_failure);
   }
 
   @override
-  E? getError() => _error;
+  F? getFailure() => _failure;
 
   @override
   S? getSuccess() => null;
